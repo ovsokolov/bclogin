@@ -62,13 +62,14 @@ class OmniauthsController < ApplicationController
     session[:store_logo] = logo.present? ? logo[:url] : 'assets/default_logo.png'
     render 'welcome/index', status: 200
   end
-  
+
   def get_login
+    @store = Store.find_by(store_hash: "d0lq2s")
     Bigcommerce.configure do |config|
       config.store_hash = ENV['BC_STORE_HASH']
       config.client_id = ENV['BC_CLIENT_ID']
       config.client_secret = ENV['BC_CLIENT_SECRET']
-      config.access_token = "kymipiayabsznw8wxs7tit1jq54qg0f"
+      config.access_token = @store.access_token
     end
     customer_array =  Bigcommerce::Customer.all.select { |tmp| tmp.email == params['email'] }
     puts params['email']
@@ -94,13 +95,13 @@ class OmniauthsController < ApplicationController
     puts redirect_url
     redirect_to redirect_url
   end
-  
+
   def create
     puts "In create @@@@@@@@@@@"
     auth_hash = request.env['omniauth.auth']
     puts auth_hash.inspect
   end
-  
+
   private
 
   def parse_signed_payload
@@ -177,5 +178,5 @@ class OmniauthsController < ApplicationController
 
     raise e
   end
-  
+
 end
