@@ -64,6 +64,9 @@ class OmniauthsController < ApplicationController
   end
 
   def get_login
+    puts request.referer
+    puts "xxxx"
+    puts URI.parse(request.referer).host
     @store = Store.find_by(store_hash: "d0lq2s")
     Bigcommerce.configure do |config|
       config.store_hash = ENV['BC_STORE_HASH']
@@ -71,6 +74,7 @@ class OmniauthsController < ApplicationController
       config.client_secret = ENV['BC_CLIENT_SECRET']
       config.access_token = @store.access_token
     end
+    puts Bigcommerce::StoreInfo.info
     customer_array =  Bigcommerce::Customer.all.select { |tmp| tmp.email == params['email'] }
     puts params['email']
     user_name = params['name']
